@@ -6,6 +6,11 @@ end
 
 local expansion_buf_id = nil
 M.expand_macro = function()
+    local function iter_lines(s)
+        if s:sub(-1) ~= "\n" then s = s .. "\n" end
+        return s:gmatch("(.-)\n")
+    end
+
     local function make_buffer_lines(name, expansion)
         local lines = {}
         local header = "// Recursive expansion of the " .. name .. " macro"
@@ -13,7 +18,7 @@ M.expand_macro = function()
         table.insert(lines, "// " .. string.rep("=", string.len(header) - 3))
         table.insert(lines, "")
 
-        for line in string.gmatch(expansion, "[^\n]+") do
+        for line in iter_lines(expansion) do
             table.insert(lines, line)
         end
 
