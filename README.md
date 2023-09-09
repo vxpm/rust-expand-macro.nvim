@@ -6,6 +6,9 @@ just install it using your favorite plugin manager and use it like so:
 require('rust-expand-macro').expand_macro()
 ```
 
+this will expand whatever macro is currently under the cursor into a new buffer and will show it
+in a new vertical split.
+
 yes, really. that's it. a single function - no need to call setup or anything like that.
 
 ## special thanks
