@@ -27,7 +27,7 @@ M.expand_macro = function()
 
     local function handler(responses)
         if responses == nil or responses[1] == nil or responses[1].result == nil then
-            vim.notify('No macro under cursor!', vim.log.levels.WARN)
+            vim.notify('No macro expansion available', vim.log.levels.WARN)
             return
         end
 
@@ -42,14 +42,15 @@ M.expand_macro = function()
         -- create new buffer for macro expansion
         expansion_buf_id = vim.api.nvim_create_buf(false, true)
 
+        -- set the contents of the buffer and it's type for syntax highlighting
+        vim.api.nvim_buf_set_lines(expansion_buf_id, 0, 0, false, make_buffer_lines(name, expansion))
+        vim.api.nvim_buf_set_option(expansion_buf_id, 'filetype', 'rust')
+
         -- create new window for macro expansion
         vim.cmd('vsplit')
         local win = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_buf(win, expansion_buf_id)
-
-        -- set the contents of the buffer and it's type for syntax highlighting
-        vim.api.nvim_buf_set_lines(expansion_buf_id, 0, 0, false, make_buffer_lines(name, expansion))
-        vim.api.nvim_buf_set_option(expansion_buf_id, 'filetype', 'rust')
+        vim.api.nvim_win_set_cursor(win, { 1, 0 })
     end
 
     vim.lsp.buf_request_all(0, 'rust-analyzer/expandMacro', vim.lsp.util.make_position_params(), handler)
